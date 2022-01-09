@@ -17,7 +17,7 @@ class Book {
 
 private:
     std::string name;
-    unsigned int id;
+    int id;
     std::weak_ptr<Holder> holder;
     std::string return_date;
 public:
@@ -25,7 +25,9 @@ public:
 
     std::string get_name();
 
-    unsigned int get_id() const;
+    std::string get_holder_name();
+
+    int get_id() const;
 
     void set_holder(std::shared_ptr<Holder> h);
 

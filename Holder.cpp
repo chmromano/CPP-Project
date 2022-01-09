@@ -20,7 +20,9 @@ std::ostream &operator<<(std::ostream &out, const Holder &h) {
 
 std::istream &operator>>(std::istream &in, Holder &h) {
     std::string line;
-    getline(in, h.name);
+    getline(in, line);
+    line.pop_back();
+    h.name = line;
     return in;
 }
 
@@ -32,6 +34,8 @@ std::vector<std::weak_ptr<Book>> Holder::get_borrowed() {
     return borrowed;
 }
 
-Holder::Holder() {
-
+void Holder::add_book(const std::shared_ptr<Book> &book) {
+    borrowed.push_back(book);
 }
+
+Holder::Holder() = default;

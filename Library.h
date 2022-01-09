@@ -27,11 +27,13 @@ private:
 public:
     Library();
 
+    ~Library();
+
     void set_name(std::string n);
 
     std::string get_name();
 
-    void add_book();
+    static void add_book();
 
     void lend_book();
 

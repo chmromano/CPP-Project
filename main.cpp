@@ -2,18 +2,15 @@
 
 int main() {
 
-    Library library;
+    std::ifstream input_file("library.txt", std::ios::in);
 
+    auto library = std::make_unique<Library>();
 
-/*    std::ifstream input_file("library.txt", std::ios::in);
+    input_file >> *library;
 
-    Library library;
+    std::cout << *library;
 
-    input_file >> library;
-
-    library.print_all();
-
-    input_file.close();*/
+    input_file.close();
 
     return 0;
 }

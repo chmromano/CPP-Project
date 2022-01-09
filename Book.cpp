@@ -18,14 +18,19 @@ std::ostream &operator<<(std::ostream &out, const Book &b) {
 
 std::istream &operator>>(std::istream &in, Book &b) {
     std::string line;
-    getline(in, b.name);
     getline(in, line);
-    b.id = std::move(std::atoll(line.c_str()));
+    line.pop_back();
+    b.name = line;
     getline(in, line);
+    line.pop_back();
+    b.id = std::atoi(line.c_str());
+    getline(in, line);
+    line.pop_back();
     if (line == "nullptr") {
         b.return_date = "nullptr";
     } else {
         getline(in, line);
+        line.pop_back();
         b.return_date = line;
     }
     return in;
@@ -37,7 +42,7 @@ std::string Book::get_name() {
     return name;
 }
 
-unsigned int Book::get_id() const {
+int Book::get_id() const {
     return id;
 }
 
@@ -57,6 +62,8 @@ void Book::set_holder(std::shared_ptr<Holder> h) {
     holder = h;
 }
 
-Book::Book() {
+Book::Book() = default;
 
+std::string Book::get_holder_name() {
+    return holder.lock()->get_name();
 }
