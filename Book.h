@@ -4,25 +4,30 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 
 #include "Holder.h"
 
+class Holder;
+
 class Book {
     friend std::ostream &operator<<(std::ostream &out, const Book &b);
+
     friend std::istream &operator>>(std::istream &in, Book &b);
+
 private:
     std::string name;
     unsigned int id;
     std::weak_ptr<Holder> holder;
-    std::unique_ptr<std::string> return_date;
-
-    static unsigned int id_list;
+    std::string return_date;
 public:
-    Book(std::string name_);
+    Book();
 
     std::string get_name();
 
     unsigned int get_id() const;
+
+    void set_holder(std::shared_ptr<Holder> h);
 
     std::string get_return_date();
 
