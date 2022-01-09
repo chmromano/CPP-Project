@@ -23,4 +23,4 @@ public:
 };
 
 
-#endif //C__PROJECT_LIBRARY_H
+#endif

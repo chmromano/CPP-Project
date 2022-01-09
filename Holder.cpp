@@ -1,9 +1,22 @@
 #include "Holder.h"
 
-std::string Holder::get_name() {
-    return name;
+std::ostream &operator<<(std::ostream &out, const Holder &h) {
+    std::cout << "HOLDER:" << h.name << ";";
+    for (auto it = h.borrowed.begin(); it != h.borrowed.end(); ++it) {
+        std::cout << it->get_id();
+        if (it + 1 != h.borrowed.end()) {
+            std::cout << ",";
+        } else {
+            std::cout << "\n";
+        }
+    }
+    return out;
 }
 
-unsigned int Holder::get_id() {
-    return id;
+std::istream &operator>>(std::istream &in, Holder &h) {
+    return in;
+}
+
+std::string Holder::get_name() {
+    return name;
 }

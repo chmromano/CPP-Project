@@ -8,8 +8,7 @@
 #include "Holder.h"
 
 class Book {
-    friend std::istream &operator>>(std::istream &in, Book &book);
-
+    friend std::ostream &operator<<(std::ostream &out, const Book &b);
 private:
     std::string name;
     unsigned int id;
@@ -22,7 +21,7 @@ public:
 
     std::string get_name();
 
-    unsigned int get_id();
+    unsigned int get_id() const;
 
     std::string get_return_date();
 
@@ -34,4 +33,4 @@ public:
 };
 
 
-#endif //C__PROJECT_BOOK_H
+#endif

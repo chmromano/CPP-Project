@@ -10,6 +10,12 @@ Book::Book(std::string name_) : name(name_), holder_name(""), return_date("") {
     id_list++;
 }
 
+// I/O -----------------------------------------------------------------------------------------------------------------
+
+std::ostream &operator<<(std::ostream &out, const Book &b) {
+    std::cout << "BOOK:" << b.name << ";" << b.id << ";" << b.holder_name << ";" << b.return_date << "\n";
+    return out;
+}
 
 // GET functions -------------------------------------------------------------------------------------------------------
 
@@ -17,7 +23,7 @@ std::string Book::get_name() {
     return name;
 }
 
-unsigned int Book::get_id() {
+unsigned int Book::get_id() const {
     return id;
 }
 
