@@ -13,24 +13,24 @@ class Book {
 private:
     std::string name;
     unsigned int id;
-    Holder holder;
+    std::string holder_name;
     std::string return_date;
+
+    static unsigned int id_list;
 public:
+    Book(std::string name_);
+
     std::string get_name();
 
     unsigned int get_id();
 
-    Holder get_Holder();
-
     std::string get_return_date();
 
-    void set_holder(Holder holder_);
+    void set_holder(std::string holder_);
 
     void set_return_date();
 
     bool availability();
-
-    bool borrow(Holder holder_);
 };
 
 

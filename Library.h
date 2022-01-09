@@ -12,9 +12,13 @@
 class Library {
 private:
     std::string name;
-    std::vector<Holder> members;
     std::vector<Book> catalogue;
+    std::vector<std::string> members;
 public:
+    Library(std::string name_);
+
+    void add_book();
+
     void lend_book();
 };
 

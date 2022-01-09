@@ -1,6 +1,11 @@
+#include "main.h"
+
 #include <iostream>
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    Library library("Helsinki Library");
+
+    library.add_book();
+
     return 0;
 }
