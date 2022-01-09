@@ -9,11 +9,12 @@
 
 class Book {
     friend std::ostream &operator<<(std::ostream &out, const Book &b);
+    friend std::istream &operator>>(std::istream &in, Book &b);
 private:
     std::string name;
     unsigned int id;
-    std::string holder_name;
-    std::string return_date;
+    std::weak_ptr<Holder> holder;
+    std::unique_ptr<std::string> return_date;
 
     static unsigned int id_list;
 public:
@@ -24,8 +25,6 @@ public:
     unsigned int get_id() const;
 
     std::string get_return_date();
-
-    void set_holder(std::string holder_);
 
     void set_return_date();
 

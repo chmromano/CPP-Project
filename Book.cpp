@@ -5,7 +5,7 @@ static unsigned int id_list = 1;
 
 // Constructor ---------------------------------------------------------------------------------------------------------
 
-Book::Book(std::string name_) : name(name_), holder_name(""), return_date("") {
+Book::Book(std::string name_) : name(name_), return_date("") {
     id = id_list;
     id_list++;
 }
@@ -13,7 +13,7 @@ Book::Book(std::string name_) : name(name_), holder_name(""), return_date("") {
 // I/O -----------------------------------------------------------------------------------------------------------------
 
 std::ostream &operator<<(std::ostream &out, const Book &b) {
-    std::cout << "BOOK:" << b.name << ";" << b.id << ";" << b.holder_name << ";" << b.return_date << "\n";
+    out << "BOOK:" << b.name << ";" << b.id << ";" << b.holder.lock()->get_name() << ";" << b.return_date << "\n";
     return out;
 }
 
@@ -33,10 +33,6 @@ std::string Book::get_return_date() {
 
 bool Book::availability() {
     return return_date.empty();
-}
-
-void Book::set_holder(std::string holder_) {
-    holder_name = holder_;
 }
 
 void Book::set_return_date() {

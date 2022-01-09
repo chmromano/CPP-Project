@@ -2,6 +2,37 @@
 
 Library::Library(std::string name_) : name(name_) {}
 
+std::ostream &operator<<(std::ostream &out, const Library &l) {
+    out << "LIBRARY:" << l.name << "\n";
+    if (!l.catalogue.empty()) {
+        for (auto b: l.catalogue) out << b;
+    }
+    if (!l.members.empty()) {
+        for (auto h: l.members) out << h;
+    }
+    return out;
+}
+
+std::istream &operator>>(std::istream &in, Library &l) {
+    std::string file_name;
+    std::cout << "Enter file to open: ";
+    std::cin >> file_name;
+    std::ifstream input_file(file_name);
+
+    if (input_file.good()) {
+        std::string line;
+        while (getline(input_file, line)) {
+            std::istringstream iss(line);
+            int a, b;
+            if (!(iss >> a >> b)) { break; }
+        }
+    } else {
+        std::cout << "File not found." << std::endl;
+    }
+
+    return in;
+}
+
 void Library::lend_book() {
     unsigned int temp_book_id;
     std::cout << "Enter book ID:";

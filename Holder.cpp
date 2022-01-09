@@ -1,13 +1,13 @@
 #include "Holder.h"
 
 std::ostream &operator<<(std::ostream &out, const Holder &h) {
-    std::cout << "HOLDER:" << h.name << ";";
+    out << "HOLDER:" << h.name << ";";
     for (auto it = h.borrowed.begin(); it != h.borrowed.end(); ++it) {
-        std::cout << it->get_id();
+        out << it->lock()->get_id();
         if (it + 1 != h.borrowed.end()) {
-            std::cout << ",";
+            out << ",";
         } else {
-            std::cout << "\n";
+            out << "\n";
         }
     }
     return out;

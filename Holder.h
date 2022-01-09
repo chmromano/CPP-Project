@@ -15,11 +15,9 @@ class Holder {
     friend std::istream &operator>>(std::istream &in, Holder &h);
 private:
     std::string name;
-    std::vector<Book> borrowed;
+    std::vector<std::weak_ptr<Book>> borrowed;
 public:
     std::string get_name();
-
-    unsigned int get_id();
 };
 
 
