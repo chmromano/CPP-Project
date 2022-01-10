@@ -5,6 +5,8 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <chrono>
+#include <ctime>
 
 #include "Holder.h"
 
@@ -25,19 +27,21 @@ public:
 
     Book(std::string name_, int id_, std::string return_date_ = "");
 
-    std::string get_name();
-
-    void return_book();
+    ~Book();
 
     int get_id() const;
 
-    std::weak_ptr<Holder> get_holder();
+    std::string get_name();
 
-    void set_holder(const std::shared_ptr<Holder>& h);
+    std::weak_ptr<Holder> get_holder();
 
     std::string get_return_date();
 
+    void set_holder(const std::shared_ptr<Holder> &h);
+
     void set_return_date();
+
+    void return_book();
 
     bool availability();
 };

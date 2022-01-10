@@ -24,13 +24,15 @@ public:
 
     Holder(std::string name_);
 
-    void return_book(const std::shared_ptr<Book>& book);
+    ~Holder();
 
     std::string get_name();
 
-    void add_book(const std::shared_ptr<Book> &book);
-
     std::vector<std::weak_ptr<Book>> get_borrowed();
+
+    void borrow_book(std::shared_ptr<Book> &book);
+
+    void return_book(const std::shared_ptr<Book> &book);
 };
 
 

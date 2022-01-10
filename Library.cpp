@@ -19,7 +19,7 @@ std::istream &operator>>(std::istream &in, Library &l) {
     while (!in.eof()) {
         std::string line;
         getline(in, line);
-        if (line.empty()) break;
+        if(line.empty()) break;
         if (isspace(line.back())) line.pop_back();
         if (line == "book") {
             auto temp_book = std::make_shared<Book>();
@@ -28,10 +28,9 @@ std::istream &operator>>(std::istream &in, Library &l) {
         } else if (line == "holder") {
             auto temp_holder = std::make_shared<Holder>();
             in >> *temp_holder;
-
             getline(in, line);
             if (isspace(line.back())) line.pop_back();
-            if (line != "nullptr") {
+            if (line != "null") {
                 std::stringstream ss(line);
                 std::string temp_string;
                 char delimiter = ',';
@@ -44,7 +43,7 @@ std::istream &operator>>(std::istream &in, Library &l) {
                                            [&n](const std::shared_ptr<Book> &b) {
                                                return b->get_id() == n;
                                            });
-                    temp_holder->add_book(*it);
+                    temp_holder->borrow_book(*it);
                     (*it)->set_holder(temp_holder);
                 });
                 l.members.push_back(std::move(temp_holder));
@@ -60,122 +59,202 @@ std::istream &operator>>(std::istream &in, Library &l) {
 
 
 // Constructors and destructors ----------------------------------------------------------------------------------------
+
 Library::Library() = default;
 
 Library::~Library() = default;
 
 
-void Library::lend_book() {
-    int temp_book_id;
-    std::cout << "Enter book ID:";
-    std::cin >> temp_book_id;
+// Other methods -------------------------------------------------------------------------------------------------------
 
-    std::string temp_holder_name;
-    std::cout << "Enter member name:";
-    std::cin >> temp_holder_name;
-
-    auto book_it = std::find_if(catalogue.begin(), catalogue.end(),
-                                [&temp_book_id](const std::shared_ptr<Book> &book) {
-                                    return book->get_id() == temp_book_id;
-                                });
-
-    auto holder_it = std::find_if(members.begin(), members.end(),
-                                  [&temp_holder_name](const std::shared_ptr<Holder> &holder) {
-                                      return holder->get_name() == temp_holder_name;
-                                  });
-
-    if (book_it == catalogue.end() && holder_it == members.end()) {
-        std::cout << "No book or member found." << std::endl;
-    } else if (book_it == catalogue.end()) {
-        std::cout << "No book found." <<
-                  std::endl;
-    } else {
-        if (holder_it == members.end()) {
-            members.push_back(std::make_shared<Holder>(temp_holder_name));
-            holder_it = std::prev(members.end());
-        }
-
-        if ((*book_it)->availability()) {
-            (*book_it)->set_holder(*holder_it);
-        } else {
-            std::cout << "The book is not available. Currently lent out to " << (*book_it)->get_holder().lock()->get_name() << "."
-                      << std::endl;
-        }
-    }
-}
-
-
-void Library::add() {
-    std::string book_name;
-    std::cout << "Enter name of book to add:" << std::endl;
-    getline(std::cin, book_name);
-    int id = generate_id();
-    catalogue.push_back(std::move(std::make_shared<Book>(book_name, id)));
-}
-
-int Library::generate_id() {
-    int number;
-    do {
-        number = rand() % 1000000 + 1;
-    } while (find_if(catalogue.begin(), catalogue.end(), [&number](std::shared_ptr<Book> &book) {
-        return book->get_id() == number;
-    }) != catalogue.end());
-    return number;
-}
-
+// Clear library records.
 void Library::initialise() {
+    std::cout << "Clearing library records..." << std::endl;
     catalogue.clear();
     members.clear();
 }
 
+// Print formatted library report.
 void Library::report() {
-    int longest_book_name = 0;
-    int longest_book_id = 0;
-    int longest_holder_name = 0;
-    int longest_return_date = 0;
+    // Title strings.
+    std::string book_id_string("ID");
+    std::string book_name_string("Book");
+    std::string holder_name_string("Holder");
+    std::string return_date_string("Return Date");
 
+    // Initial widths.
+    int longest_book_name = static_cast<int>(book_name_string.size());
+    int longest_book_id = static_cast<int>(book_id_string.size());
+    int longest_holder_name = static_cast<int>(holder_name_string.size());
+    int longest_return_date = static_cast<int>(return_date_string.size());
+
+    // Sort the catalogue by book ID before printing.
+    std::sort(catalogue.begin(), catalogue.end(),
+              [](const std::shared_ptr<Book> &book_1, const std::shared_ptr<Book> &book_2) {
+                  return book_1->get_id() < book_2->get_id();
+              });
+
+    // Find how much printing width is required.
     std::for_each(catalogue.begin(), catalogue.end(),
                   [&longest_book_name, &longest_holder_name, &longest_return_date, &longest_book_id](
                           const std::shared_ptr<Book> &book) {
-                      if (book->get_name().size() > longest_book_name) longest_book_name = book->get_name().size();
-                      int temp = book->get_id();
+
+                      // Find number of ID digits.
+                      int temp_book_id = book->get_id();
                       int digits = 0;
                       do {
-                          temp /= 10;
+                          temp_book_id /= 10;
                           digits++;
-                      } while (temp != 0);
+                      } while (temp_book_id != 0);
                       if (digits > longest_book_id) longest_book_id = digits;
+
+                      // Find the longest book name.
+                      if (book->get_name().size() > longest_book_name)
+                          longest_book_name = static_cast<int>(book->get_name().size());
+
+                      // If available find the longest holder name and return date.
                       if (!book->availability()) {
                           if (book->get_holder().lock()->get_name().size() > longest_holder_name)
-                              longest_holder_name = book->get_holder().lock()->get_name().size();
+                              longest_holder_name = static_cast<int>(book->get_holder().lock()->get_name().size());
                           if (book->get_return_date().size() > longest_return_date)
-                              longest_return_date = book->get_return_date().size();
+                              longest_return_date = static_cast<int>(book->get_return_date().size());
                       }
                   });
 
+    // Print title row.
+    std::cout << std::endl;
+    std::cout << std::setw(longest_book_id) << std::left << book_id_string << " | ";
+    std::cout << std::setw(longest_book_name) << std::left << book_name_string << " | ";
+    std::cout << std::setw(longest_holder_name) << std::left << holder_name_string << " | ";
+    std::cout << std::setw(longest_return_date) << std::left << return_date_string << std::endl;
+
+    // Print the borrowed books.
     std::for_each(catalogue.begin(), catalogue.end(),
                   [&longest_book_name, &longest_holder_name, &longest_return_date, &longest_book_id](
                           const std::shared_ptr<Book> &book) {
                       if (!book->availability()) {
-                          std::cout << std::setw(longest_book_id) << book->get_id() << " | ";
-                          std::cout << std::setw(longest_book_name) << book->get_name() << " | ";
-                          std::cout << std::setw(longest_holder_name) << book->get_holder().lock()->get_name() << " | ";
-                          std::cout << std::setw(longest_return_date) << book->get_return_date() << std::endl;
+                          std::cout << std::setw(longest_book_id) << std::right << book->get_id() << " | ";
+                          std::cout << std::setw(longest_book_name) << std::right << book->get_name() << " | ";
+                          std::cout << std::setw(longest_holder_name) << std::right
+                                    << book->get_holder().lock()->get_name() << " | ";
+                          std::cout << std::setw(longest_return_date) << std::right << book->get_return_date()
+                                    << std::endl;
                       }
                   });
 
+    // Print the available books.
     std::for_each(catalogue.begin(), catalogue.end(),
                   [&longest_book_name, &longest_holder_name, &longest_book_id, &longest_return_date](
                           const std::shared_ptr<Book> &book) {
                       if (book->availability()) {
-                          std::cout << std::setw(longest_book_id) << book->get_id() << " | ";
-                          std::cout << std::setw(longest_book_name) << book->get_name() << " | ";
-                          std::cout << std::setw(longest_holder_name) << "N/A" << " | ";
-                          std::cout << std::setw(longest_return_date) << "Available" << std::endl;
+                          std::cout << std::setw(longest_book_id) << std::right << book->get_id() << " | ";
+                          std::cout << std::setw(longest_book_name) << std::right << book->get_name() << " | ";
+                          std::cout << std::setw(longest_holder_name) << std::right << "N/A" << " | ";
+                          std::cout << std::setw(longest_return_date) << std::right << "N/A" << std::endl;
                       }
                   });
+
+    std::cout << std::endl;
 }
 
+// Add a book to the library.
+void Library::add_book() {
+    std::string book_name;
+    std::cout << "Enter name of book to add_book:" << std::endl;
+    getline(std::cin, book_name);
+    if (book_name.empty()) {
+        std::cout << "Error: string is empty." << std::endl;
+    } else {
+        if (isspace(book_name.back())) book_name.pop_back();
+        // Generate and ID and add the book to the catalogue.
+        int id = generate_id();
+        catalogue.push_back(std::move(std::make_shared<Book>(book_name, id)));
+    }
+}
+
+// Remove a book from the library.
+void Library::remove_book() {
+    int temp_book_id;
+    std::cout << "Enter book ID to remove:" << std::endl;
+    std::cin >> temp_book_id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (!std::cin.good()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Error: invalid ID." << std::endl;
+    } else {
+        // Find the book with the ID and remove it from the catalogue.
+        auto book_it = std::find_if(catalogue.begin(), catalogue.end(),
+                                    [&temp_book_id](const std::shared_ptr<Book> &book) {
+                                        return book->get_id() == temp_book_id;
+                                    });
+        if (book_it == catalogue.end()) {
+            std::cout << "No book found." << std::endl;
+        } else {
+            catalogue.erase(book_it);
+        }
+    }
+}
+
+// Lend a book.
+void Library::lend_book() {
+    int temp_book_id;
+    std::cout << "Enter book ID:";
+    std::cin >> temp_book_id;
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    if (!std::cin.good()) {
+        std::cin.clear();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        std::cout << "Error: invalid ID." << std::endl;
+    } else {
+        std::string temp_holder_name;
+        std::cout << "Enter member name:";
+        getline(std::cin, temp_holder_name);
+        if (temp_holder_name.empty()) {
+            std::cout << "Error: string is empty." << std::endl;
+        } else {
+            if (isspace(temp_holder_name.back())) temp_holder_name.pop_back();
+
+            // Find the book from the catalogue.
+            auto book_it = std::find_if(catalogue.begin(), catalogue.end(),
+                                        [&temp_book_id](const std::shared_ptr<Book> &book) {
+                                            return book->get_id() == temp_book_id;
+                                        });
+
+            // Find the member from the member list.
+            auto holder_it = std::find_if(members.begin(), members.end(),
+                                          [&temp_holder_name](const std::shared_ptr<Holder> &holder) {
+                                              return holder->get_name() == temp_holder_name;
+                                          });
+
+            if (book_it == catalogue.end() && holder_it == members.end()) {
+                std::cout << "No book or member found." << std::endl;
+            } else if (book_it == catalogue.end()) {
+                std::cout << "No book found." << std::endl;
+            } else {
+                // If a member is not found add the member to the member list.
+                if (holder_it == members.end()) {
+                    members.push_back(std::make_shared<Holder>(temp_holder_name));
+                    holder_it = std::prev(members.end());
+                    std::cout << temp_holder_name << " added to members." << std::endl;
+                }
+
+                // If the book is available lend it out.
+                if ((*book_it)->availability()) {
+                    (*book_it)->set_holder(*holder_it);
+                    (*book_it)->set_return_date();
+                    (*holder_it)->borrow_book(*book_it);
+                } else {
+                    std::cout << "The book is not available. Currently lent out to "
+                              << (*book_it)->get_holder().lock()->get_name() << "."
+                              << std::endl;
+                }
+            }
+        }
+    }
+}
+
+// Return a book to the library.
 void Library::return_book() {
     int temp_book_id = 0;
     std::cout << "Enter ID:" << std::endl;
@@ -190,13 +269,63 @@ void Library::return_book() {
                                     [&temp_book_id](const std::shared_ptr<Book> &book) {
                                         return book->get_id() == temp_book_id;
                                     });
-        if (book_it == catalogue.end()){
+        if (book_it == catalogue.end()) {
             std::cout << "Book not found." << std::endl;
-        } else if ((*book_it)->availability()){
+        } else if ((*book_it)->availability()) {
             std::cout << "This book is already available." << std::endl;
-        } else {(*book_it)->get_holder().lock()->return_book(*book_it);
+        } else {
+            (*book_it)->get_holder().lock()->return_book(*book_it);
             (*book_it)->return_book();
-
         }
     }
+}
+
+// Remove a member from the library (returns all borrowed books).
+void Library::remove_member() {
+    if (members.empty()) {
+        std::cout << "Member list empty." << std::endl;
+    } else {
+        std::cout << std::endl << "Members:" << std::endl;
+        for (const auto &m: members) {
+            std::cout << m->get_name() << std::endl;
+        }
+        std::cout << std::endl;
+
+        std::string member_name;
+        std::cout << "Enter name of the member to remove:" << std::endl;
+        getline(std::cin, member_name);
+        if (member_name.empty()) {
+            std::cout << "Error: string is empty." << std::endl;
+        } else {
+            if (isspace(member_name.back())) member_name.pop_back();
+
+            auto holder_it = std::find_if(members.begin(), members.end(),
+                                          [&member_name](const std::shared_ptr<Holder> &holder) {
+                                              return holder->get_name() == member_name;
+                                          });
+
+            if (holder_it == members.end()) {
+                std::cout << "No member found." << std::endl;
+            } else {
+                auto temp = (*holder_it)->get_borrowed();
+                if (!temp.empty()) {
+                    for (const auto &b: temp) {
+                        b.lock()->return_book();
+                    }
+                }
+                members.erase(holder_it);
+            }
+        }
+    }
+}
+
+// Generate an ID for a book (first available starting from 0).
+int Library::generate_id() {
+    int number = 0;
+    do {
+        number++;
+    } while (find_if(catalogue.begin(), catalogue.end(), [&number](std::shared_ptr<Book> &book) {
+        return book->get_id() == number;
+    }) != catalogue.end());
+    return number;
 }

@@ -27,6 +27,7 @@ private:
     std::vector<std::shared_ptr<Book>> catalogue;
     std::vector<std::shared_ptr<Holder>> members;
 
+    int generate_id();
 
 public:
     Library();
@@ -35,17 +36,17 @@ public:
 
     void initialise();
 
-    int generate_id();
+    void report();
 
-    void add();
+    void add_book();
 
-    void return_book();
+    void remove_book();
 
     void lend_book();
 
-    void report();
+    void return_book();
 
-
+    void remove_member();
 };
 
 

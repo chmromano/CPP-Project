@@ -2,11 +2,14 @@
 
 #include <utility>
 
+
+// I/O operators -------------------------------------------------------------------------------------------------------
+
 std::ostream &operator<<(std::ostream &out, const Holder &h) {
     out << "holder\n";
     out << h.name << "\n";
     if (h.borrowed.empty()) {
-        out << "nullptr\n";
+        out << "null\n";
     } else {
         for (auto it = h.borrowed.begin(); it != h.borrowed.end(); ++it) {
             out << it->lock()->get_id();
@@ -28,6 +31,18 @@ std::istream &operator>>(std::istream &in, Holder &h) {
     return in;
 }
 
+
+// Constructors and destructors ----------------------------------------------------------------------------------------
+
+Holder::Holder() = default;
+
+Holder::Holder(std::string name_) : name(std::move(name_)) {}
+
+Holder::~Holder() = default;
+
+
+// Other methods -------------------------------------------------------------------------------------------------------
+
 std::string Holder::get_name() {
     return name;
 }
@@ -36,17 +51,12 @@ std::vector<std::weak_ptr<Book>> Holder::get_borrowed() {
     return borrowed;
 }
 
-void Holder::add_book(const std::shared_ptr<Book> &book) {
+void Holder::borrow_book(std::shared_ptr<Book> &book) {
     borrowed.push_back(book);
 }
-
-Holder::Holder(std::string name_) : name(std::move(name_)) {}
 
 void Holder::return_book(const std::shared_ptr<Book> &book) {
     borrowed.erase(std::remove_if(borrowed.begin(), borrowed.end(),
                                   [&book](std::weak_ptr<Book> &b) { return book->get_id() == b.lock()->get_id(); }),
                    borrowed.end());
-    //std::cout << (*borrowed.begin()).lock()->get_name() << std::endl;
 }
-
-Holder::Holder() = default;
