@@ -338,7 +338,7 @@ void Library::return_book() {
 // Remove a member from the library (returns all borrowed books).
 void Library::remove_member() {
     if (members.empty()) {
-        std::cout << "Member list empty. Press enter to continue.";
+        std::cout << std::endl << "Member list empty. Press enter to continue.";
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         std::cout << std::endl << "Members:" << std::endl;

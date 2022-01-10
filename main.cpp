@@ -104,6 +104,8 @@ int main() {
                     output_file.open(file_name, std::ofstream::out | std::ofstream::trunc);
                     output_file << *library;
                     output_file.close();
+                    std::cout << std::endl << "Library successfully saved. Press enter to continue.";
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     break;
                 case 9:
                     // Exit function mode and return to main menu.
