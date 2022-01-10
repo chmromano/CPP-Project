@@ -23,13 +23,17 @@ private:
 public:
     Book();
 
+    Book(std::string name_, int id_, std::string return_date_ = "");
+
     std::string get_name();
 
-    std::string get_holder_name();
+    void return_book();
 
     int get_id() const;
 
-    void set_holder(std::shared_ptr<Holder> h);
+    std::weak_ptr<Holder> get_holder();
+
+    void set_holder(const std::shared_ptr<Holder>& h);
 
     std::string get_return_date();
 

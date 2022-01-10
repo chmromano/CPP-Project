@@ -8,11 +8,14 @@
 #include <fstream>
 #include <memory>
 #include <algorithm>
+#include <iomanip>
 
 #include "Holder.h"
 #include "Book.h"
 
+
 class Holder;
+
 class Book;
 
 class Library {
@@ -21,23 +24,28 @@ class Library {
     friend std::istream &operator>>(std::istream &in, Library &l);
 
 private:
-    std::string name;
     std::vector<std::shared_ptr<Book>> catalogue;
     std::vector<std::shared_ptr<Holder>> members;
+
+
 public:
     Library();
 
     ~Library();
 
-    void set_name(std::string n);
+    void initialise();
 
-    std::string get_name();
+    int generate_id();
 
-    static void add_book();
+    void add();
+
+    void return_book();
 
     void lend_book();
 
-    void print_all();
+    void report();
+
+
 };
 
 

@@ -1,7 +1,9 @@
 #include "Book.h"
 
+#include <utility>
 
-// I/O -----------------------------------------------------------------------------------------------------------------
+
+// I/O operators -------------------------------------------------------------------------------------------------------
 
 std::ostream &operator<<(std::ostream &out, const Book &b) {
     out << "book\n";
@@ -19,18 +21,16 @@ std::ostream &operator<<(std::ostream &out, const Book &b) {
 std::istream &operator>>(std::istream &in, Book &b) {
     std::string line;
     getline(in, line);
-    line.pop_back();
+    if (isspace(line.back())) line.pop_back();
     b.name = line;
     getline(in, line);
-    line.pop_back();
+    if (isspace(line.back())) line.pop_back();
     b.id = std::atoi(line.c_str());
     getline(in, line);
-    line.pop_back();
+    if (isspace(line.back())) line.pop_back();
     if (line == "nullptr") {
-        b.return_date = "nullptr";
+        b.return_date = "";
     } else {
-        getline(in, line);
-        line.pop_back();
         b.return_date = line;
     }
     return in;
@@ -54,16 +54,22 @@ bool Book::availability() {
     return return_date.empty();
 }
 
-void Book::set_return_date() {
-    return_date = "TEST";
+std::weak_ptr<Holder> Book::get_holder() {
+    return holder;
 }
 
-void Book::set_holder(std::shared_ptr<Holder> h) {
-    holder = h;
+void Book::set_holder(const std::shared_ptr<Holder>& holder_) {
+    holder = holder_;
 }
 
 Book::Book() = default;
 
-std::string Book::get_holder_name() {
-    return holder.lock()->get_name();
+Book::Book(std::string name_, int id_, std::string return_date_) :
+        name(std::move(name_)), id(id_), return_date(std::move(return_date_)) {
+    holder.reset();
+}
+
+void Book::return_book() {
+    holder.reset();
+    return_date.clear();
 }

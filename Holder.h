@@ -22,6 +22,10 @@ private:
 public:
     Holder();
 
+    Holder(std::string name_);
+
+    void return_book(const std::shared_ptr<Book>& book);
+
     std::string get_name();
 
     void add_book(const std::shared_ptr<Book> &book);

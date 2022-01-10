@@ -1,5 +1,7 @@
 #include "Holder.h"
 
+#include <utility>
+
 std::ostream &operator<<(std::ostream &out, const Holder &h) {
     out << "holder\n";
     out << h.name << "\n";
@@ -21,7 +23,7 @@ std::ostream &operator<<(std::ostream &out, const Holder &h) {
 std::istream &operator>>(std::istream &in, Holder &h) {
     std::string line;
     getline(in, line);
-    line.pop_back();
+    if (isspace(line.back())) line.pop_back();
     h.name = line;
     return in;
 }
@@ -36,6 +38,15 @@ std::vector<std::weak_ptr<Book>> Holder::get_borrowed() {
 
 void Holder::add_book(const std::shared_ptr<Book> &book) {
     borrowed.push_back(book);
+}
+
+Holder::Holder(std::string name_) : name(std::move(name_)) {}
+
+void Holder::return_book(const std::shared_ptr<Book> &book) {
+    borrowed.erase(std::remove_if(borrowed.begin(), borrowed.end(),
+                                  [&book](std::weak_ptr<Book> &b) { return book->get_id() == b.lock()->get_id(); }),
+                   borrowed.end());
+    //std::cout << (*borrowed.begin()).lock()->get_name() << std::endl;
 }
 
 Holder::Holder() = default;
