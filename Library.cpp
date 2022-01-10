@@ -117,6 +117,7 @@ void Library::initialise() {
     members.clear();
     std::cout << std::endl << "Library records cleared. Press enter to continue.";
     getchar();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // Print formatted library report.
@@ -201,6 +202,7 @@ void Library::report() {
 
     std::cout << std::endl << "Press enter to continue.";
     getchar();
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
 // Add a book to the library.
@@ -211,6 +213,7 @@ void Library::add_book() {
     if (book_name.empty()) {
         std::cout << std::endl << "Error: string is empty. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         if (isspace(book_name.back())) book_name.pop_back();
         // Generate and ID and add the book to the catalogue.
@@ -218,6 +221,7 @@ void Library::add_book() {
         catalogue.push_back(std::move(std::make_shared<Book>(book_name, id)));
         std::cout << "Book successfully added. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 }
 
@@ -232,17 +236,20 @@ void Library::remove_book() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << std::endl << "Error: invalid ID. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         // Find the book with the ID and remove it from the catalogue.
         auto book_it = find_book(temp_book_id);
         if (book_it == catalogue.end()) {
             std::cout << "No book found. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else {
             if ((*book_it)->get_holder().lock() != nullptr) (*book_it)->get_holder().lock()->return_book(*book_it);
             catalogue.erase(book_it);
             std::cout << "Book successfully removed. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
@@ -258,6 +265,7 @@ void Library::lend_book() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << std::endl << "Error: invalid ID. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         std::string temp_holder_name;
         std::cout << "Enter member name:" << std::endl;
@@ -265,6 +273,7 @@ void Library::lend_book() {
         if (temp_holder_name.empty()) {
             std::cout << std::endl << "Error: string is empty. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else {
             if (isspace(temp_holder_name.back())) temp_holder_name.pop_back();
 
@@ -277,9 +286,11 @@ void Library::lend_book() {
             if (book_it == catalogue.end() && holder_it == members.end()) {
                 std::cout << "No book or member found. Press enter to continue.";
                 getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             } else if (book_it == catalogue.end()) {
                 std::cout << "No book found. Press enter to continue.";
                 getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             } else {
                 // If a member is not found add the member to the member list.
                 if (holder_it == members.end()) {
@@ -296,11 +307,13 @@ void Library::lend_book() {
                     std::cout << "Book successfully lent out to: " << (*holder_it)->get_name()
                               << ". Press enter to continue.";
                     getchar();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 } else {
                     std::cout << "The book is not available. Currently lent out to "
                               << (*book_it)->get_holder().lock()->get_name()
                               << ". Press enter to continue.";
                     getchar();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 }
             }
         }
@@ -318,19 +331,23 @@ void Library::return_book() {
         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         std::cout << "Error: invalid input. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         auto book_it = find_book(temp_book_id);
         if (book_it == catalogue.end()) {
             std::cout << "Book not found. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else if ((*book_it)->availability()) {
             std::cout << "This book had already been returned. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else {
             (*book_it)->get_holder().lock()->return_book(*book_it);
             (*book_it)->return_book();
             std::cout << "Book successfully returned. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
 }
@@ -340,6 +357,7 @@ void Library::remove_member() {
     if (members.empty()) {
         std::cout << "Member list empty. Press enter to continue.";
         getchar();
+        std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     } else {
         std::cout << std::endl << "Members:" << std::endl;
         for (const auto &m: members) {
@@ -353,6 +371,7 @@ void Library::remove_member() {
         if (member_name.empty()) {
             std::cout << "Error: string is empty. Press enter to continue.";
             getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         } else {
             if (isspace(member_name.back())) member_name.pop_back();
 
@@ -361,6 +380,7 @@ void Library::remove_member() {
             if (holder_it == members.end()) {
                 std::cout << "No member found. Press enter to continue.";
                 getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             } else {
                 auto temp = (*holder_it)->get_borrowed();
                 if (!temp.empty()) {
@@ -371,6 +391,7 @@ void Library::remove_member() {
                 members.erase(holder_it);
                 std::cout << "Member successfully removed. Press enter to continue.";
                 getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
         }
     }
