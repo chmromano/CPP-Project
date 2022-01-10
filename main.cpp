@@ -27,7 +27,7 @@ int main() {
             std::getline(std::cin, file_name);
             if (file_name.empty()) {
                 std::cout << std::endl << "Error: string is empty. Press enter to continue.";
-                getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 mode = 0;
             } else {
                 if (isspace(file_name.back())) file_name.pop_back();
@@ -36,7 +36,7 @@ int main() {
                     input_file >> *library;
                 } else {
                     std::cout << std::endl << "Error: file does not exist. Press enter to continue.";
-                    getchar();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     mode = 0;
                 }
                 input_file.close();
@@ -47,7 +47,7 @@ int main() {
             getline(std::cin, file_name);
             if (file_name.empty()) {
                 std::cout << std::endl << "Error: string is empty. Press enter to continue.";
-                getchar();
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                 mode = 0;
             } else {
                 if (isspace(file_name.back())) file_name.pop_back();
@@ -59,7 +59,7 @@ int main() {
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             }
             std::cout << std::endl << "Error: invalid choice. Press enter to continue.";
-            getchar();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
         // Enter library functions.
@@ -117,7 +117,7 @@ int main() {
                         std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     }
                     std::cout << std::endl << "Error: invalid choice. Press enter to continue.";
-                    getchar();
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     break;
             }
         }
