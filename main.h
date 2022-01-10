@@ -1,3 +1,5 @@
+// Christopher Romano
+
 #ifndef C__PROJECT_MAIN_H
 #define C__PROJECT_MAIN_H
 

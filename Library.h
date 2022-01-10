@@ -1,3 +1,5 @@
+// Christopher Romano
+
 #ifndef C__PROJECT_LIBRARY_H
 #define C__PROJECT_LIBRARY_H
 
@@ -26,6 +28,10 @@ class Library {
 private:
     std::vector<std::shared_ptr<Book>> catalogue;
     std::vector<std::shared_ptr<Holder>> members;
+
+    auto find_book(int id_);
+
+    auto find_member(std::string name_);
 
     int generate_id();
 

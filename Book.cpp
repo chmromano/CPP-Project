@@ -1,3 +1,5 @@
+// Christopher Romano
+
 #include "Book.h"
 
 #include <utility>
@@ -5,11 +7,13 @@
 
 // I/O operators -------------------------------------------------------------------------------------------------------
 
+// Book output operator.
 std::ostream &operator<<(std::ostream &out, const Book &b) {
     out << "book\n";
     out << b.name << "\n";
     out << b.id << "\n";
     if (b.holder.expired()) {
+        // If no holder.
         out << "null\n";
     } else {
         out << b.return_date << "\n";
@@ -17,14 +21,20 @@ std::ostream &operator<<(std::ostream &out, const Book &b) {
     return out;
 }
 
+// Book input operator.
 std::istream &operator>>(std::istream &in, Book &b) {
+    // Get book name.
     std::string line;
     getline(in, line);
     if (isspace(line.back())) line.pop_back();
     b.name = std::move(line);
+
+    // Get book ID.
     getline(in, line);
     if (isspace(line.back())) line.pop_back();
     b.id = std::atoi(line.c_str());
+
+    // Get return date if available.
     getline(in, line);
     if (isspace(line.back())) line.pop_back();
     if (line == "null") {
@@ -48,7 +58,7 @@ Book::Book(std::string name_, int id_, std::string return_date_) :
 Book::~Book() = default;
 
 
-// Other methods -------------------------------------------------------------------------------------------------------
+// Misc methods --------------------------------------------------------------------------------------------------------
 
 int Book::get_id() const {
     return id;
@@ -74,12 +84,10 @@ void Book::set_holder(const std::shared_ptr<Holder> &holder_) {
 void Book::set_return_date() {
     // Duration of two weeks.
     std::chrono::duration<int, std::ratio<60 * 60 * 24 * 14>> two_weeks(1);
-
     std::chrono::system_clock::time_point return_tt = std::chrono::system_clock::now() + two_weeks;
     time_t tt = std::chrono::system_clock::to_time_t(return_tt);
     std::string temp = ctime(&tt);
     if (isspace(temp.back())) temp.pop_back();
-
     return_date = std::move(temp);
 }
 
@@ -88,6 +96,7 @@ void Book::return_book() {
     return_date.clear();
 }
 
+// Check book availability. Empty return date means the book is available.
 bool Book::availability() {
     return return_date.empty();
 }
