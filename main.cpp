@@ -28,7 +28,7 @@ int main() {
             if (file_name.empty()) {
                 std::cout << std::endl << "Error: string is empty. Press enter to continue.";
                 getchar();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                mode = 0;
             } else {
                 if (isspace(file_name.back())) file_name.pop_back();
                 input_file.open(file_name, std::ifstream::in);
@@ -37,7 +37,6 @@ int main() {
                 } else {
                     std::cout << std::endl << "Error: file does not exist. Press enter to continue.";
                     getchar();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     mode = 0;
                 }
                 input_file.close();
@@ -49,7 +48,7 @@ int main() {
             if (file_name.empty()) {
                 std::cout << std::endl << "Error: string is empty. Press enter to continue.";
                 getchar();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+                mode = 0;
             } else {
                 if (isspace(file_name.back())) file_name.pop_back();
             }
@@ -61,7 +60,6 @@ int main() {
             }
             std::cout << std::endl << "Error: invalid choice. Press enter to continue.";
             getchar();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
 
         // Enter library functions.
@@ -120,7 +118,6 @@ int main() {
                     }
                     std::cout << std::endl << "Error: invalid choice. Press enter to continue.";
                     getchar();
-                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
                     break;
             }
         }
